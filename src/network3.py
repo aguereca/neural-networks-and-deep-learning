@@ -70,9 +70,9 @@ def load_data_shared(filename="../data/mnist.pkl.gz"):
         the data to the GPU, if one is available.
 
         """
-        shared_x = theano.shared(
+        shared_x = theano.tensor._shared(
             np.asarray(data[0], dtype=theano.config.floatX), borrow=True)
-        shared_y = theano.shared(
+        shared_y = theano.tensor._shared(
             np.asarray(data[1], dtype=theano.config.floatX), borrow=True)
         return shared_x, T.cast(shared_y, "int32")
     return [shared(training_data), shared(validation_data), shared(test_data)]
@@ -210,12 +210,12 @@ class ConvPoolLayer(object):
         self.activation_fn=activation_fn
         # initialize weights and biases
         n_out = (filter_shape[0]*np.prod(filter_shape[2:])/np.prod(poolsize))
-        self.w = theano.shared(
+        self.w = theano.tensor._shared(
             np.asarray(
                 np.random.normal(loc=0, scale=np.sqrt(1.0/n_out), size=filter_shape),
                 dtype=theano.config.floatX),
             borrow=True)
-        self.b = theano.shared(
+        self.b = theano.tensor._shared(
             np.asarray(
                 np.random.normal(loc=0, scale=1.0, size=(filter_shape[0],)),
                 dtype=theano.config.floatX),
@@ -241,13 +241,13 @@ class FullyConnectedLayer(object):
         self.activation_fn = activation_fn
         self.p_dropout = p_dropout
         # Initialize weights and biases
-        self.w = theano.shared(
+        self.w = theano.tensor._shared(
             np.asarray(
                 np.random.normal(
                     loc=0.0, scale=np.sqrt(1.0/n_out), size=(n_in, n_out)),
                 dtype=theano.config.floatX),
             name='w', borrow=True)
-        self.b = theano.shared(
+        self.b = theano.tensor._shared(
             np.asarray(np.random.normal(loc=0.0, scale=1.0, size=(n_out,)),
                        dtype=theano.config.floatX),
             name='b', borrow=True)
@@ -274,10 +274,10 @@ class SoftmaxLayer(object):
         self.n_out = n_out
         self.p_dropout = p_dropout
         # Initialize weights and biases
-        self.w = theano.shared(
+        self.w = theano.tensor._shared(
             np.zeros((n_in, n_out), dtype=theano.config.floatX),
             name='w', borrow=True)
-        self.b = theano.shared(
+        self.b = theano.tensor._shared(
             np.zeros((n_out,), dtype=theano.config.floatX),
             name='b', borrow=True)
         self.params = [self.w, self.b]
